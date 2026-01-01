@@ -36,18 +36,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 6️⃣ Deploy to S3 (FORCE-CLEAN REGION)
+      # 🔥 6️⃣ HARD FIX: Force region & remove bad env
+      - name: Force AWS region
+        run: |
+          unset AWS_REGION
+          export AWS_DEFAULT_REGION=us-east-1
+          aws sts get-caller-identity
+
+      # 7️⃣ Deploy to S3
       - name: Deploy to S3
         run: |
-          unset AWS_REGION
-          export AWS_DEFAULT_REGION=us-east-1
-          aws s3 sync dist/my-angular19-app s3://file-upload-features --delete
+          aws s3 sync dist/my-angular19-app s3://${{ secrets.S3_BUCKET }} --delete
 
-      # 7️⃣ Invalidate CloudFront cache
+      # 8️⃣ Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
         run: |
-          unset AWS_REGION
-          export AWS_DEFAULT_REGION=us-east-1
           aws cloudfront create-invalidation \
-            --distribution-id E16PF705UNMTT3 \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
