@@ -10,25 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ Build Angular app
       - name: Build Angular app
         run: npm run build -- --configuration production
 
-      # 5️⃣ Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -36,21 +31,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 6️⃣ 🔥 HARD FIX: remove broken AWS_REGION & force correct region
-      - name: Force AWS region (critical fix)
-        run: |
-          unset AWS_REGION
-          export AWS_DEFAULT_REGION=us-east-1
-          aws sts get-caller-identity
+      - name: Force AWS region
+        run: aws sts get-caller-identity
 
-      # 7️⃣ Deploy to S3
+      # 🔥 SINGLE-LINE COMMAND (NO SHELL BLOCK)
       - name: Deploy to S3
-        run: |
-          aws s3 sync dist/my-angular19-app s3://${{ secrets.S3_BUCKET }} --delete
+        run: aws s3 sync dist/my-angular19-app s3://${{ secrets.S3_BUCKET }} --delete
 
-      # 8️⃣ Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
