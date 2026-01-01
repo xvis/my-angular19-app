@@ -36,7 +36,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 6️⃣ Force AWS region (safety)
+      # 6️⃣ Force AWS region (extra safety)
       - name: Force AWS region
         run: |
           unset AWS_REGION
