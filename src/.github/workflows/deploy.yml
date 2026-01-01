@@ -36,8 +36,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 🔥 6️⃣ HARD FIX: Force region & remove bad env
-      - name: Force AWS region
+      # 6️⃣ 🔥 HARD FIX: remove broken AWS_REGION & force correct region
+      - name: Force AWS region (critical fix)
         run: |
           unset AWS_REGION
           export AWS_DEFAULT_REGION=us-east-1
