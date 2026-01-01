@@ -28,7 +28,7 @@ jobs:
       - name: Build Angular app
         run: npm run build -- --configuration production
 
-      # 5️⃣ Configure AWS credentials (THE KEY FIX)
+      # 5️⃣ Configure AWS credentials (CORRECT WAY)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
