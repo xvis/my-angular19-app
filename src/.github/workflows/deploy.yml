@@ -28,7 +28,7 @@ jobs:
       - name: Build Angular app
         run: npm run build -- --configuration production
 
-      # 5️⃣ Configure AWS credentials (CORRECT WAY)
+      # 5️⃣ Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -36,14 +36,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 6️⃣ Deploy to S3
+      # 6️⃣ Deploy to S3 (FORCE-CLEAN REGION)
       - name: Deploy to S3
         run: |
+          unset AWS_REGION
+          export AWS_DEFAULT_REGION=us-east-1
           aws s3 sync dist/my-angular19-app s3://file-upload-features --delete
 
       # 7️⃣ Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
         run: |
+          unset AWS_REGION
+          export AWS_DEFAULT_REGION=us-east-1
           aws cloudfront create-invalidation \
             --distribution-id E16PF705UNMTT3 \
             --paths "/*"
