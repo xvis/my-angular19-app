@@ -36,14 +36,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 6️⃣ 🔥 HARD FIX: remove broken AWS_REGION & force correct region
-      - name: Force AWS region (critical fix)
+      # 6️⃣ Force AWS region (critical fix)
+      - name: Force AWS region
         run: |
           unset AWS_REGION
           export AWS_DEFAULT_REGION=us-east-1
           aws sts get-caller-identity
 
-      # 7️⃣ Deploy to S3
+      # 7️⃣ Deploy to S3 (FIXED)
       - name: Deploy to S3
         run: |
           aws s3 sync dist/my-angular19-app s3://${{ secrets.S3_BUCKET }} --delete
